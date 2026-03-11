@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+// PrimeNG icons
+@import "primeicons/primeicons.css";
+
+// Custom theme variables
+:root {
+  --bg-primary: #0F0F1A;
+  --bg-secondary: #1A1A2E;
+  --bg-card: #16213E;
+  --accent-primary: #00D2FF;
+  --accent-secondary: #7B2FF7;
+  --text-primary: #FFFFFF;
+  --text-secondary: #A0AEC0;
+  --success: #00E676;
+  --warning: #FFD600;
+  --danger: #FF5252;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+// Glassmorphism utility
+.glass-card {
+  background: rgba(22, 33, 62, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+
+// Gradient accent utility
+.gradient-accent {
+  background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+}
+
+// Smooth transitions
+a, button {
+  transition: all 0.2s ease;
+}
