@@ -1,0 +1,54 @@
+<nav class="sidebar" [class.collapsed]="collapsed()">
+  <!-- Header -->
+  <div class="sidebar-header">
+    <div class="brand" [class.hidden]="collapsed()">
+      <div class="brand-icon">
+        <i class="pi pi-wallet"></i>
+      </div>
+      <span class="brand-name">ExpenseTracker</span>
+    </div>
+    <button class="collapse-btn" (click)="toggle()" title="Toggle sidebar">
+      <i class="pi" [class.pi-chevron-left]="!collapsed()" [class.pi-chevron-right]="collapsed()"></i>
+    </button>
+  </div>
+
+  <!-- Nav Items -->
+  <ul class="nav-list">
+    @for (item of navItems; track item.route) {
+      <li>
+        <a
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          class="nav-item"
+          [title]="collapsed() ? item.label : ''"
+        >
+          <i class="pi {{ item.icon }} nav-icon"></i>
+          @if (!collapsed()) {
+            <span class="nav-label">{{ item.label }}</span>
+          }
+          @if (item.label === 'AI Insights' && !collapsed()) {
+            <span class="ai-badge">AI</span>
+          }
+        </a>
+      </li>
+    }
+  </ul>
+
+  <!-- Footer: User Info + Logout -->
+  <div class="sidebar-footer">
+    <div class="user-info" [class.collapsed]="collapsed()">
+      <div class="avatar">
+        {{ (authService.currentUser()?.fullName ?? 'U')[0].toUpperCase() }}
+      </div>
+      @if (!collapsed()) {
+        <div class="user-details">
+          <span class="user-name">{{ authService.currentUser()?.fullName ?? 'User' }}</span>
+          <span class="user-email">{{ authService.currentUser()?.email ?? '' }}</span>
+        </div>
+        <button class="logout-btn" (click)="logout()" title="Logout">
+          <i class="pi pi-sign-out"></i>
+        </button>
+      }
+    </div>
+  </div>
+</nav>

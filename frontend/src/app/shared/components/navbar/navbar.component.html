@@ -1,0 +1,38 @@
+<header class="navbar">
+  <div class="navbar-left">
+    <span class="page-title">Dashboard</span>
+  </div>
+
+  <div class="navbar-right">
+    <!-- Notification bell -->
+    <button class="icon-btn" title="Notifications">
+      <i class="pi pi-bell"></i>
+      <span class="badge">3</span>
+    </button>
+
+    <!-- User menu -->
+    <div class="user-menu-wrapper" (clickOutside)="closeUserMenu()">
+      <button class="user-btn" (click)="toggleUserMenu()" title="Account">
+        <div class="avatar">{{ initials }}</div>
+        <span class="user-name-text">{{ authService.currentUser()?.fullName ?? 'User' }}</span>
+        <i class="pi pi-chevron-down" [class.rotated]="userMenuOpen"></i>
+      </button>
+
+      @if (userMenuOpen) {
+        <div class="dropdown-menu glass-card">
+          <div class="dropdown-header">
+            <strong>{{ authService.currentUser()?.fullName }}</strong>
+            <span>{{ authService.currentUser()?.email }}</span>
+          </div>
+          <hr class="dropdown-divider" />
+          <a routerLink="/settings" class="dropdown-item" (click)="closeUserMenu()">
+            <i class="pi pi-cog"></i> Settings
+          </a>
+          <button class="dropdown-item logout" (click)="logout()">
+            <i class="pi pi-sign-out"></i> Sign out
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+</header>

@@ -1,0 +1,175 @@
+<p-toast position="top-right" />
+
+<div class="auth-page">
+  <!-- Animated background -->
+  <div class="bg-mesh">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+  </div>
+
+  <!-- Card -->
+  <div class="auth-card glass-card">
+    <!-- Logo -->
+    <div class="logo-section">
+      <div class="logo-icon">
+        <i class="pi pi-wallet"></i>
+      </div>
+      <h1 class="logo-text">ExpenseTracker</h1>
+    </div>
+
+    <h2 class="card-title">Create your account</h2>
+    <p class="card-subtitle">Start tracking smarter in under a minute</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+      <!-- Full Name -->
+      <div class="field">
+        <label for="fullName" class="field-label">Full name</label>
+        <div class="input-wrapper" [class.input-error]="fullName.invalid && fullName.touched">
+          <i class="pi pi-user input-icon"></i>
+          <input
+            id="fullName"
+            type="text"
+            pInputText
+            formControlName="fullName"
+            placeholder="Sparsh Handa"
+            class="auth-input"
+            autocomplete="name"
+          />
+        </div>
+        @if (fullName.invalid && fullName.touched) {
+          <span class="error-msg">
+            @if (fullName.errors?.['required']) { Full name is required. }
+            @else if (fullName.errors?.['minlength']) { Name must be at least 2 characters. }
+          </span>
+        }
+      </div>
+
+      <!-- Email -->
+      <div class="field">
+        <label for="email" class="field-label">Email address</label>
+        <div class="input-wrapper" [class.input-error]="email.invalid && email.touched">
+          <i class="pi pi-envelope input-icon"></i>
+          <input
+            id="email"
+            type="email"
+            pInputText
+            formControlName="email"
+            placeholder="you@example.com"
+            class="auth-input"
+            autocomplete="email"
+          />
+        </div>
+        @if (email.invalid && email.touched) {
+          <span class="error-msg">
+            @if (email.errors?.['required']) { Email is required. }
+            @else if (email.errors?.['email']) { Please enter a valid email. }
+          </span>
+        }
+      </div>
+
+      <!-- Password -->
+      <div class="field">
+        <label for="regPassword" class="field-label">Password</label>
+        <div class="input-wrapper" [class.input-error]="password.invalid && password.touched">
+          <i class="pi pi-lock input-icon"></i>
+          <p-password
+            inputId="regPassword"
+            formControlName="password"
+            placeholder="Min. 8 characters"
+            [feedback]="false"
+            [toggleMask]="true"
+            styleClass="auth-password"
+            autocomplete="new-password"
+          />
+        </div>
+        <!-- Strength bar -->
+        @if (password.value) {
+          <div class="strength-row">
+            <div class="strength-bars">
+              <div class="bar" [class.active]="passwordStrength() >= 0" [class]="passwordStrength() >= 0 ? strengthClass() : ''"></div>
+              <div class="bar" [class.active]="passwordStrength() >= 1" [class]="passwordStrength() >= 1 ? strengthClass() : ''"></div>
+              <div class="bar" [class.active]="passwordStrength() >= 2" [class]="passwordStrength() >= 2 ? strengthClass() : ''"></div>
+            </div>
+            <span class="strength-label" [class]="strengthClass()">{{ strengthLabel() }}</span>
+          </div>
+        }
+        @if (password.invalid && password.touched) {
+          <span class="error-msg">
+            @if (password.errors?.['required']) { Password is required. }
+            @else if (password.errors?.['minlength']) { Password must be at least 8 characters. }
+          </span>
+        }
+      </div>
+
+      <!-- Age + Monthly Income (2-col row) -->
+      <div class="field-row">
+        <div class="field">
+          <label for="age" class="field-label">Age</label>
+          <div class="input-wrapper" [class.input-error]="age.invalid && age.touched">
+            <i class="pi pi-calendar input-icon"></i>
+            <input
+              id="age"
+              type="number"
+              pInputText
+              formControlName="age"
+              placeholder="24"
+              class="auth-input"
+              min="18"
+              max="100"
+            />
+          </div>
+          @if (age.invalid && age.touched) {
+            <span class="error-msg">
+              @if (age.errors?.['required']) { Age is required. }
+              @else if (age.errors?.['ageRange']) { Must be 18–100 years old. }
+            </span>
+          }
+        </div>
+
+        <div class="field">
+          <label for="income" class="field-label">Monthly income (₹)</label>
+          <div class="input-wrapper" [class.input-error]="monthlyIncome.invalid && monthlyIncome.touched">
+            <i class="pi pi-indian-rupee input-icon"></i>
+            <input
+              id="income"
+              type="number"
+              pInputText
+              formControlName="monthlyIncome"
+              placeholder="50000"
+              class="auth-input"
+              min="0"
+            />
+          </div>
+          @if (monthlyIncome.invalid && monthlyIncome.touched) {
+            <span class="error-msg">
+              @if (monthlyIncome.errors?.['required']) { Income is required. }
+              @else if (monthlyIncome.errors?.['min']) { Must be a positive value. }
+            </span>
+          }
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <button
+        type="submit"
+        class="btn-primary"
+        [class.loading]="loading()"
+        [disabled]="loading()"
+      >
+        @if (loading()) {
+          <i class="pi pi-spin pi-spinner"></i>
+          <span>Creating account…</span>
+        } @else {
+          <i class="pi pi-user-plus"></i>
+          <span>Create Account</span>
+        }
+      </button>
+    </form>
+
+    <p class="login-link">
+      Already have an account?
+      <a routerLink="/login">Sign in</a>
+    </p>
+  </div>
+</div>
