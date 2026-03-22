@@ -1,0 +1,127 @@
+.ingestion-log {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.section-header {
+  margin-bottom: 1.5rem;
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+
+    i {
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, var(--accent-secondary), #C471ED);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+// ── Filters ───────────────────────────────────────────────────────────────────
+.filters-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+
+  .filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+
+    label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+  }
+
+  .record-count {
+    margin-left: auto;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    align-self: center;
+  }
+}
+
+// ── Table Card ────────────────────────────────────────────────────────────────
+.table-card {
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+
+  .source-tag { font-size: 0.7rem; letter-spacing: 0.05em; }
+
+  .raw-text {
+    font-family: 'Inter', monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: pointer;
+
+    &:hover { color: var(--text-primary); }
+  }
+
+  .conf-pill {
+    padding: 0.2rem 0.6rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+
+    &.conf-high   { background: rgba(0, 230, 118, 0.15); color: var(--success); }
+    &.conf-medium { background: rgba(255, 214, 0, 0.15);  color: var(--warning); }
+    &.conf-low    { background: rgba(255, 82, 82, 0.15);  color: var(--danger); }
+  }
+
+  .date-cell {
+    color: var(--text-secondary);
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+}
+
+// ── Empty State ───────────────────────────────────────────────────────────────
+.empty-cell { padding: 0 !important; }
+
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+  color: var(--text-secondary);
+
+  i {
+    font-size: 2.5rem;
+    opacity: 0.35;
+    display: block;
+    margin-bottom: 0.75rem;
+  }
+
+  p { margin: 0; font-size: 0.9rem; }
+}
+
+// ── Paginator ─────────────────────────────────────────────────────────────────
+.log-paginator {
+  margin-top: 0.5rem;
+}

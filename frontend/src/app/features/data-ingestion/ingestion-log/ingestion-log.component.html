@@ -1,0 +1,113 @@
+<section class="ingestion-log">
+
+  <!-- ── Header ── -->
+  <div class="section-header">
+    <div class="title-row">
+      <i class="pi pi-history"></i>
+      <h2>Ingestion Log</h2>
+    </div>
+    <p class="subtitle">Full audit trail of all ingested raw messages and their parsing outcomes.</p>
+  </div>
+
+  <!-- ── Filters ── -->
+  <div class="filters-row glass-card">
+    <div class="filter-group">
+      <label>Source</label>
+      <p-select
+        [options]="sourceOptions"
+        [(ngModel)]="selectedSource"
+        optionLabel="label"
+        optionValue="value"
+        styleClass="filter-dropdown">
+      </p-select>
+    </div>
+    <div class="filter-group">
+      <label>Status</label>
+      <p-select
+        [options]="statusOptions"
+        [(ngModel)]="selectedStatus"
+        optionLabel="label"
+        optionValue="value"
+        styleClass="filter-dropdown">
+      </p-select>
+    </div>
+    <span class="record-count">{{ filteredEntries.length }} records</span>
+  </div>
+
+  <!-- ── Table ── -->
+  <div class="table-card glass-card">
+    <p-table
+      [value]="filteredEntries"
+      [loading]="loading()"
+      [scrollable]="true"
+      scrollHeight="480px"
+      styleClass="p-datatable-sm log-table">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:120px">Source</th>
+          <th>Raw Text</th>
+          <th style="width:130px">Status</th>
+          <th style="width:110px">Confidence</th>
+          <th style="width:150px">Date</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-entry>
+        <tr>
+          <td>
+            <p-tag
+              [value]="entry.source"
+              [severity]="sourceSeverity(entry.source)"
+              styleClass="source-tag">
+            </p-tag>
+          </td>
+          <td>
+            <span
+              class="raw-text"
+              [pTooltip]="entry.rawText"
+              tooltipPosition="top">
+              {{ truncate(entry.rawText) }}
+            </span>
+          </td>
+          <td>
+            <p-tag
+              [value]="entry.status"
+              [severity]="statusSeverity(entry.status)">
+            </p-tag>
+          </td>
+          <td>
+            <span
+              class="conf-pill"
+              [class]="confidenceClass(entry.parsingConfidence)">
+              {{ (entry.parsingConfidence * 100 | number: '1.0-0') }}%
+            </span>
+          </td>
+          <td class="date-cell">{{ entry.createdAt | date: 'dd MMM yy, HH:mm' }}</td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="5" class="empty-cell">
+            <div class="empty-state">
+              <i class="pi pi-inbox"></i>
+              <p>No log entries yet. Start by importing SMS messages.</p>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+
+  <!-- ── Paginator ── -->
+  <p-paginator
+    *ngIf="totalRecords() > pageSize"
+    [rows]="pageSize"
+    [totalRecords]="totalRecords()"
+    (onPageChange)="onPageChange($event)"
+    styleClass="log-paginator">
+  </p-paginator>
+
+</section>

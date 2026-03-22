@@ -1,0 +1,59 @@
+<section class="ingestion-page">
+
+  <!-- ── Page Header ── -->
+  <header class="page-header">
+    <div class="header-title">
+      <i class="pi pi-server header-icon"></i>
+      <div>
+        <h1>Data Ingestion</h1>
+        <p>Import your transactions from multiple sources</p>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── Stats Bar ── -->
+  <div class="stats-bar glass-card">
+    <div class="stat-item" *ngFor="let stat of stats">
+      <i [class]="stat.icon + ' stat-icon'"></i>
+      <span class="stat-value">{{ stat.value }}</span>
+      <span class="stat-label">{{ stat.label }}</span>
+    </div>
+  </div>
+
+  <!-- ── Channel Cards (shown when no child route is active) ── -->
+  <div class="channels-grid">
+    <ng-container *ngFor="let ch of channels">
+      <!-- Active card -->
+      <a
+        *ngIf="ch.available"
+        class="channel-card glass-card"
+        [routerLink]="ch.route"
+        routerLinkActive="active">
+        <div class="channel-glow" [style.background]="ch.gradient"></div>
+        <div class="channel-icon" [style.background]="ch.gradient">
+          <i [class]="ch.icon"></i>
+        </div>
+        <h3>{{ ch.title }}</h3>
+        <p>{{ ch.description }}</p>
+        <span class="channel-cta">Open <i class="pi pi-arrow-right"></i></span>
+      </a>
+
+      <!-- Coming soon card -->
+      <div *ngIf="!ch.available" class="channel-card glass-card disabled">
+        <div class="channel-glow" [style.background]="ch.gradient"></div>
+        <div class="channel-icon dim" [style.background]="ch.gradient">
+          <i [class]="ch.icon"></i>
+        </div>
+        <h3>{{ ch.title }}</h3>
+        <p>{{ ch.description }}</p>
+        <span class="coming-soon-badge">Coming Soon</span>
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- ── Child Route Outlet ── -->
+  <div class="child-outlet">
+    <router-outlet></router-outlet>
+  </div>
+
+</section>

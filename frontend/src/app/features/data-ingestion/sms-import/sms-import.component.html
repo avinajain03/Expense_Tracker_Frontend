@@ -1,0 +1,162 @@
+<p-toast position="top-right"></p-toast>
+
+<section class="sms-import">
+
+  <!-- ── Header ── -->
+  <div class="section-header">
+    <div class="title-row">
+      <i class="pi pi-mobile"></i>
+      <h2>SMS Import</h2>
+    </div>
+    <p class="subtitle">Paste one or more bank/UPI SMS messages, one per line. We'll extract transactions automatically.</p>
+  </div>
+
+  <!-- ── Input Area ── -->
+  <div class="input-card glass-card">
+    <label class="input-label">Paste your SMS messages below</label>
+    <textarea
+      pTextarea
+      [(ngModel)]="rawSmsInput"
+      [rows]="7"
+      [autoResize]="false"
+      placeholder="Rs.450.00 debited from A/C XX1234 on 08-Mar-26 via UPI to SWIGGY. Ref 412345678901&#10;INR 1200.00 debited from HDFC Bank A/C **5678 on 08-Mar-26 to AMAZON. Txn ID 987654321&#10;..."
+      class="sms-textarea"
+    ></textarea>
+
+    <div class="input-actions">
+      <button
+        pButton
+        label="Parse SMS"
+        icon="pi pi-search"
+        [loading]="loading()"
+        [disabled]="!hasInput || loading()"
+        (click)="parse()"
+        class="btn-parse">
+      </button>
+      <button
+        pButton
+        label="Clear"
+        icon="pi pi-times"
+        severity="secondary"
+        [outlined]="true"
+        (click)="clearAll()"
+        [disabled]="!hasInput && parsedTransactions().length === 0"
+        class="btn-clear">
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Parse Stats ── -->
+  <div class="parse-stats glass-card" *ngIf="parsedTransactions().length > 0">
+    <div class="stat-chip success">
+      <i class="pi pi-check-circle"></i>
+      <span>{{ parsedTransactions().length }} Parsed</span>
+    </div>
+    <div class="stat-chip warning" *ngIf="duplicateCount() > 0">
+      <i class="pi pi-copy"></i>
+      <span>{{ duplicateCount() }} Duplicates</span>
+    </div>
+    <div class="stat-chip danger" *ngIf="failedCount() > 0">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span>{{ failedCount() }} Failed</span>
+    </div>
+    <div class="spacer"></div>
+    <button pButton label="Import Selected ({{ selectedTransactions.length }})"
+      icon="pi pi-check"
+      [disabled]="selectedTransactions.length === 0"
+      (click)="importSelected()"
+      class="btn-import-sel">
+    </button>
+    <button pButton label="Import All"
+      icon="pi pi-download"
+      (click)="importAll()"
+      class="btn-import-all gradient-btn">
+    </button>
+  </div>
+
+  <!-- ── Preview Table ── -->
+  <div class="preview-table-wrap glass-card" *ngIf="parsedTransactions().length > 0">
+    <div class="table-header-row">
+      <h3>Parsed Preview</h3>
+      <label class="select-all">
+        <p-checkbox
+          [binary]="true"
+          [ngModel]="selectedTransactions.length === parsedTransactions().length"
+          (onChange)="toggleAll($event.checked)"
+          inputId="selectAll">
+        </p-checkbox>
+        <span>Select All</span>
+      </label>
+    </div>
+
+    <p-table
+      [value]="parsedTransactions()"
+      [scrollable]="true"
+      scrollHeight="400px"
+      styleClass="p-datatable-sm">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:48px"></th>
+          <th>Merchant</th>
+          <th>Amount</th>
+          <th>Date</th>
+          <th>UPI Platform</th>
+          <th>Confidence</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-tx>
+        <tr [class.row-selected]="tx.selected">
+          <td>
+            <p-checkbox
+              [(ngModel)]="tx.selected"
+              [binary]="true">
+            </p-checkbox>
+          </td>
+          <td>
+            <div class="merchant-cell">
+              <i class="pi pi-shopping-bag merchant-icon"></i>
+              <span>{{ tx.merchant || '—' }}</span>
+            </div>
+          </td>
+          <td>
+            <span class="amount-cell">
+              {{ tx.currency || '₹' }}{{ tx.amount | number:'1.2-2' }}
+            </span>
+          </td>
+          <td class="date-cell">{{ tx.date | date:'dd MMM yyyy' }}</td>
+          <td>
+            <span class="platform-badge" *ngIf="tx.upiPlatform; else noUpi">
+              {{ tx.upiPlatform }}
+            </span>
+            <ng-template #noUpi><span class="na-text">—</span></ng-template>
+          </td>
+          <td>
+            <span
+              class="confidence-pill"
+              [class]="confidenceClass(tx.parsingConfidence)"
+              [pTooltip]="'Raw score: ' + tx.parsingConfidence">
+              {{ confidenceLabel(tx.parsingConfidence) }}
+              ({{ confidencePercent(tx.parsingConfidence) }})
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="empty-row">No transactions parsed yet.</td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+
+  <!-- ── Empty State ── -->
+  <div class="empty-state glass-card" *ngIf="!hasInput && parsedTransactions().length === 0">
+    <i class="pi pi-inbox empty-icon"></i>
+    <p>Paste your SMS messages above and click <strong>Parse SMS</strong> to get started.</p>
+  </div>
+
+</section>
