@@ -33,7 +33,7 @@ export class DataIngestionComponent {
       icon: 'pi pi-envelope',
       route: 'email',
       gradient: 'linear-gradient(135deg, #7B2FF7, #C471ED)',
-      available: false,
+      available: true,
     },
     {
       id: 'statement',

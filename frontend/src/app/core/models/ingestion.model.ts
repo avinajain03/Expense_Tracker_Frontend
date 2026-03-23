@@ -43,3 +43,44 @@ export interface IngestionLogPage {
 export interface SmsIngestionRequest {
   smsTexts: string[];
 }
+
+// ── Email Connect Models ────────────────────────────────────────────────────
+
+export interface ImapConfig {
+  host: string;
+  port: number;
+  email: string;
+  password: string;
+  ssl: boolean;
+}
+
+export type EmailProvider = 'GMAIL' | 'IMAP';
+export type EmailSyncStatus = 'CONNECTED' | 'SYNCING' | 'DISCONNECTED' | 'ERROR';
+
+export interface EmailConnectionStatus {
+  connected: boolean;
+  provider: EmailProvider | null;
+  email: string | null;
+  lastSyncAt: string | null;
+  syncedCount: number;
+  syncStatus: EmailSyncStatus;
+  errorMessage: string | null;
+}
+
+export interface DetectedEmail {
+  id: string;
+  sender: string;
+  subject: string;
+  receivedAt: string;
+  extractedAmount: number | null;
+  extractedMerchant: string | null;
+  parsingConfidence: number;
+  selected?: boolean;
+}
+
+export interface EmailScanResult {
+  totalScanned: number;
+  transactionEmailsFound: number;
+  duplicateCount: number;
+  emails: DetectedEmail[];
+}

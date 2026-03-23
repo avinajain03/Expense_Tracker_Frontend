@@ -32,6 +32,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'email',
+        loadComponent: () =>
+          import('./features/data-ingestion/email-connect/email-connect.component').then(
+            (m) => m.EmailConnectComponent
+          ),
+      },
+      {
         path: 'log',
         loadComponent: () =>
           import('./features/data-ingestion/ingestion-log/ingestion-log.component').then(

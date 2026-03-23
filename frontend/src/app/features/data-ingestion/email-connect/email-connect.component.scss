@@ -1,0 +1,483 @@
+.email-connect {
+  animation: fadeIn 0.3s ease;
+  padding: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.section-header {
+  margin-bottom: 1.5rem;
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+
+    i {
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, #7B2FF7, #C471ED);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+// ── Provider Icon ─────────────────────────────────────────────────────────────
+.provider-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  i { font-size: 1.5rem; color: #fff; }
+
+  &.gmail-icon { background: linear-gradient(135deg, #EA4335, #FF6D5A); }
+  &.imap-icon  { background: linear-gradient(135deg, #7B2FF7, #C471ED); }
+  &.connected-icon {
+    background: linear-gradient(135deg, var(--success), #1DE9B6);
+  }
+}
+
+// ── Connect Card (Gmail) ──────────────────────────────────────────────────────
+.connect-card {
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+  margin-bottom: 1.25rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .connect-card-glow {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #EA4335, #FF6D5A);
+    opacity: 0.08;
+    filter: blur(50px);
+    pointer-events: none;
+  }
+
+  .connect-card-body {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+
+    .provider-info {
+      flex: 1;
+
+      h3 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin: 0 0 0.35rem;
+      }
+
+      p {
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin: 0;
+        line-height: 1.6;
+      }
+    }
+  }
+
+  .btn-gmail {
+    background: linear-gradient(135deg, #EA4335, #FF6D5A) !important;
+    border: none !important;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+// ── OR Divider ────────────────────────────────────────────────────────────────
+.or-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1.5rem 0;
+
+  .or-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  .or-text {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+}
+
+// ── IMAP Toggle ───────────────────────────────────────────────────────────────
+.imap-toggle {
+  padding: 1.5rem 2rem;
+  cursor: pointer;
+  margin-bottom: 0;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+  }
+
+  .imap-toggle-body {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+
+    .provider-info {
+      flex: 1;
+
+      h3 { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.25rem; }
+      p  { font-size: 0.85rem; color: var(--text-secondary); margin: 0; }
+    }
+
+    .toggle-chevron {
+      font-size: 1rem;
+      color: var(--text-secondary);
+      transition: transform 0.2s ease;
+    }
+  }
+}
+
+// ── IMAP Form ─────────────────────────────────────────────────────────────────
+.imap-form {
+  padding: 1.5rem 2rem;
+  margin-top: 0.75rem;
+  margin-bottom: 1.25rem;
+  animation: fadeIn 0.25s ease;
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem 1.5rem;
+    margin-bottom: 1.5rem;
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+
+      &.full-width { grid-column: 1 / -1; }
+
+      &.ssl-toggle {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.75rem;
+
+        label {
+          text-transform: none;
+          letter-spacing: 0;
+          font-size: 0.85rem;
+          color: var(--text-primary);
+        }
+      }
+
+      label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      .field-input {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        color: var(--text-primary);
+        padding: 0.6rem 0.85rem;
+        font-size: 0.85rem;
+        transition: border-color 0.2s;
+
+        &:focus {
+          border-color: var(--accent-secondary);
+          outline: none;
+          box-shadow: 0 0 0 3px rgba(123, 47, 247, 0.12);
+        }
+
+        &::placeholder { color: rgba(160, 174, 192, 0.5); }
+      }
+    }
+  }
+
+  .imap-actions {
+    display: flex;
+    gap: 0.75rem;
+
+    .btn-connect {
+      background: linear-gradient(135deg, #7B2FF7, #C471ED) !important;
+      border: none !important;
+      font-weight: 600;
+    }
+  }
+}
+
+// ── Status Card ───────────────────────────────────────────────────────────────
+.status-card {
+  position: relative;
+  overflow: hidden;
+  padding: 2rem;
+  margin-bottom: 1.25rem;
+
+  .status-card-glow {
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--success), #1DE9B6);
+    opacity: 0.08;
+    filter: blur(50px);
+    pointer-events: none;
+  }
+
+  .status-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+
+    .status-provider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      h3 { font-size: 1.1rem; font-weight: 700; margin: 0 0 0.15rem; }
+      .status-email { font-size: 0.85rem; color: var(--text-secondary); }
+    }
+  }
+
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    &.connected {
+      background: rgba(0, 230, 118, 0.15);
+      color: var(--success);
+    }
+  }
+
+  .status-stats {
+    display: flex;
+    gap: 3rem;
+    margin-bottom: 1.5rem;
+    padding: 1.25rem 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+    .status-stat {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+
+      .stat-number {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-primary);
+      }
+
+      .stat-label {
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+      }
+    }
+  }
+
+  .status-actions {
+    display: flex;
+    gap: 0.75rem;
+
+    .gradient-btn {
+      background: linear-gradient(135deg, #7B2FF7, #C471ED) !important;
+      border: none !important;
+      font-weight: 600;
+    }
+  }
+}
+
+// ── Scan Stats ────────────────────────────────────────────────────────────────
+.scan-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+
+  .spacer { flex: 1; }
+
+  .stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    &.info    { background: rgba(0, 210, 255, 0.15); color: var(--accent-primary); }
+    &.success { background: rgba(0, 230, 118, 0.15); color: var(--success); }
+    &.warning { background: rgba(255, 214, 0, 0.15);  color: var(--warning); }
+  }
+
+  .btn-import-sel {
+    background: transparent !important;
+    border: 1px solid var(--accent-secondary) !important;
+    color: var(--accent-secondary) !important;
+    font-weight: 600;
+  }
+}
+
+// ── Preview Table ─────────────────────────────────────────────────────────────
+.preview-table-wrap {
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+
+  .table-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    h3 { font-size: 1rem; font-weight: 700; margin: 0; }
+
+    .select-all {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+  }
+
+  .sender-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+
+    .sender-icon { color: #C471ED; }
+  }
+
+  .subject-cell {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .amount-cell {
+    font-weight: 700;
+    color: var(--danger);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .date-cell { color: var(--text-secondary); font-size: 0.85rem; }
+  .na-text   { color: var(--text-secondary); }
+
+  .confidence-pill {
+    padding: 0.25rem 0.7rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: default;
+
+    &.conf-high   { background: rgba(0, 230, 118, 0.15); color: var(--success); }
+    &.conf-medium { background: rgba(255, 214, 0, 0.15);  color: var(--warning); }
+    &.conf-low    { background: rgba(255, 82, 82, 0.15);  color: var(--danger); }
+  }
+
+  .row-selected { background: rgba(123, 47, 247, 0.05) !important; }
+
+  .empty-row {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem;
+  }
+}
+
+// ── Empty / Loading State ─────────────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+
+  .empty-icon {
+    font-size: 3rem;
+    color: var(--text-secondary);
+    opacity: 0.4;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+  }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+@media (max-width: 640px) {
+  .connect-card .connect-card-body {
+    flex-direction: column;
+    text-align: center;
+
+    .btn-gmail { width: 100%; }
+  }
+
+  .imap-form .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .status-card .status-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+}

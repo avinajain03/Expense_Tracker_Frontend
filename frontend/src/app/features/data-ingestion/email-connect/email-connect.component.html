@@ -1,0 +1,259 @@
+<p-toast position="top-right"></p-toast>
+
+<section class="email-connect">
+
+  <!-- ── Header ── -->
+  <div class="section-header">
+    <div class="title-row">
+      <i class="pi pi-envelope"></i>
+      <h2>Email Connect</h2>
+    </div>
+    <p class="subtitle">Connect your email to auto-scan for bank and UPI transaction alerts.</p>
+  </div>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!--  NOT CONNECTED — Connection Options                                    -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="!isConnected">
+
+    <!-- Gmail OAuth Card -->
+    <div class="connect-card glass-card">
+      <div class="connect-card-glow"></div>
+      <div class="connect-card-body">
+        <div class="provider-icon gmail-icon">
+          <i class="pi pi-google"></i>
+        </div>
+        <div class="provider-info">
+          <h3>Connect Gmail</h3>
+          <p>Sign in with Google to automatically scan your inbox for bank transaction alerts, UPI receipts, and payment confirmations.</p>
+        </div>
+        <button
+          pButton
+          label="Sign in with Google"
+          icon="pi pi-google"
+          [loading]="loading()"
+          (click)="connectGmail()"
+          class="btn-gmail">
+        </button>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="or-divider">
+      <span class="or-line"></span>
+      <span class="or-text">OR</span>
+      <span class="or-line"></span>
+    </div>
+
+    <!-- IMAP Toggle -->
+    <div class="imap-toggle glass-card" (click)="toggleImapForm()">
+      <div class="imap-toggle-body">
+        <div class="provider-icon imap-icon">
+          <i class="pi pi-server"></i>
+        </div>
+        <div class="provider-info">
+          <h3>Connect via IMAP</h3>
+          <p>For Outlook, Yahoo, or any email provider that supports IMAP.</p>
+        </div>
+        <i class="pi toggle-chevron" [class.pi-chevron-down]="!showImapForm()" [class.pi-chevron-up]="showImapForm()"></i>
+      </div>
+    </div>
+
+    <!-- IMAP Form -->
+    <div class="imap-form glass-card" *ngIf="showImapForm()">
+      <div class="form-grid">
+        <div class="form-field">
+          <label for="imapHost">IMAP Host</label>
+          <input pInputText id="imapHost" [(ngModel)]="imapConfig.host"
+                 placeholder="imap.gmail.com" class="field-input" />
+        </div>
+        <div class="form-field">
+          <label for="imapPort">Port</label>
+          <p-inputNumber id="imapPort" [(ngModel)]="imapConfig.port"
+                         [useGrouping]="false" [min]="1" [max]="65535"
+                         styleClass="field-input-number" />
+        </div>
+        <div class="form-field full-width">
+          <label for="imapEmail">Email Address</label>
+          <input pInputText id="imapEmail" [(ngModel)]="imapConfig.email"
+                 placeholder="you@example.com" class="field-input" />
+        </div>
+        <div class="form-field full-width">
+          <label for="imapPassword">Password / App Password</label>
+          <p-password id="imapPassword" [(ngModel)]="imapConfig.password"
+                      [toggleMask]="true" [feedback]="false"
+                      placeholder="Enter app password"
+                      styleClass="field-password" />
+        </div>
+        <div class="form-field ssl-toggle">
+          <p-toggleSwitch [(ngModel)]="imapConfig.ssl" inputId="imapSsl" />
+          <label for="imapSsl">Use SSL/TLS</label>
+        </div>
+      </div>
+
+      <div class="imap-actions">
+        <button pButton label="Connect" icon="pi pi-link"
+                [loading]="loading()" [disabled]="!imapFormValid || loading()"
+                (click)="connectImap()" class="btn-connect">
+        </button>
+        <button pButton label="Cancel" severity="secondary" [outlined]="true"
+                (click)="toggleImapForm()" class="btn-cancel">
+        </button>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <!--  CONNECTED — Status + Sync                                            -->
+  <!-- ════════════════════════════════════════════════════════════════════════ -->
+  <ng-container *ngIf="isConnected">
+
+    <div class="status-card glass-card">
+      <div class="status-card-glow"></div>
+
+      <div class="status-header">
+        <div class="status-provider">
+          <div class="provider-icon connected-icon">
+            <i [class]="connectionStatus()?.provider === 'GMAIL' ? 'pi pi-google' : 'pi pi-server'"></i>
+          </div>
+          <div>
+            <h3>{{ connectionStatus()?.provider === 'GMAIL' ? 'Gmail' : 'IMAP' }} Connected</h3>
+            <span class="status-email">{{ connectionStatus()?.email ?? '—' }}</span>
+          </div>
+        </div>
+        <span class="status-badge connected">
+          <i class="pi pi-check-circle"></i> Connected
+        </span>
+      </div>
+
+      <div class="status-stats">
+        <div class="status-stat">
+          <span class="stat-number">{{ connectionStatus()?.syncedCount ?? 0 }}</span>
+          <span class="stat-label">Emails Synced</span>
+        </div>
+        <div class="status-stat">
+          <span class="stat-number">{{ connectionStatus()?.lastSyncAt ? (connectionStatus()!.lastSyncAt! | date:'dd MMM, HH:mm') : 'Never' }}</span>
+          <span class="stat-label">Last Sync</span>
+        </div>
+      </div>
+
+      <div class="status-actions">
+        <button pButton label="Sync Now" icon="pi pi-refresh"
+                [loading]="syncing()" (click)="syncNow()"
+                class="btn-sync gradient-btn">
+        </button>
+        <button pButton label="Disconnect" icon="pi pi-power-off"
+                severity="danger" [outlined]="true"
+                [loading]="disconnecting()" (click)="disconnect()"
+                class="btn-disconnect">
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Scan Results ── -->
+    <ng-container *ngIf="scanResult() as result">
+
+      <!-- Stats bar -->
+      <div class="scan-stats glass-card">
+        <div class="stat-chip info">
+          <i class="pi pi-search"></i>
+          <span>{{ result.totalScanned }} Scanned</span>
+        </div>
+        <div class="stat-chip success">
+          <i class="pi pi-check-circle"></i>
+          <span>{{ result.transactionEmailsFound }} Found</span>
+        </div>
+        <div class="stat-chip warning" *ngIf="result.duplicateCount > 0">
+          <i class="pi pi-copy"></i>
+          <span>{{ result.duplicateCount }} Duplicates</span>
+        </div>
+        <div class="spacer"></div>
+        <button pButton label="Import Selected ({{ selectedEmails.length }})"
+                icon="pi pi-check"
+                [disabled]="selectedEmails.length === 0"
+                (click)="importSelected()"
+                class="btn-import-sel">
+        </button>
+      </div>
+
+      <!-- Detected emails table -->
+      <div class="preview-table-wrap glass-card" *ngIf="result.emails.length > 0">
+        <div class="table-header-row">
+          <h3>Detected Transaction Emails</h3>
+          <label class="select-all">
+            <p-checkbox
+              [binary]="true"
+              [ngModel]="selectedEmails.length === result.emails.length"
+              (onChange)="toggleAllEmails($event.checked)"
+              inputId="selectAllEmails">
+            </p-checkbox>
+            <span>Select All</span>
+          </label>
+        </div>
+
+        <p-table
+          [value]="result.emails"
+          [scrollable]="true"
+          scrollHeight="400px"
+          styleClass="p-datatable-sm">
+
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width:48px"></th>
+              <th>Sender</th>
+              <th>Subject</th>
+              <th>Amount</th>
+              <th>Date</th>
+              <th>Confidence</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-email>
+            <tr [class.row-selected]="email.selected">
+              <td>
+                <p-checkbox [(ngModel)]="email.selected" [binary]="true"></p-checkbox>
+              </td>
+              <td>
+                <div class="sender-cell">
+                  <i class="pi pi-envelope sender-icon"></i>
+                  <span>{{ email.sender }}</span>
+                </div>
+              </td>
+              <td class="subject-cell">{{ email.subject }}</td>
+              <td>
+                <span class="amount-cell" *ngIf="email.extractedAmount; else noAmount">
+                  ₹{{ email.extractedAmount | number:'1.2-2' }}
+                </span>
+                <ng-template #noAmount><span class="na-text">—</span></ng-template>
+              </td>
+              <td class="date-cell">{{ email.receivedAt | date:'dd MMM yyyy' }}</td>
+              <td>
+                <span class="confidence-pill"
+                      [class]="confidenceClass(email.parsingConfidence)"
+                      [pTooltip]="'Raw score: ' + email.parsingConfidence">
+                  {{ confidenceLabel(email.parsingConfidence) }}
+                  ({{ confidencePercent(email.parsingConfidence) }})
+                </span>
+              </td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="6" class="empty-row">No transaction emails detected.</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </ng-container>
+
+  </ng-container>
+
+  <!-- ── Empty State (loading) ── -->
+  <div class="empty-state glass-card" *ngIf="loading() && !isConnected && !connectionStatus()">
+    <i class="pi pi-spin pi-spinner empty-icon"></i>
+    <p>Checking email connection status…</p>
+  </div>
+
+</section>
