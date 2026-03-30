@@ -17,7 +17,7 @@ export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authorizedReq).pipe(
     catchError((error: HttpErrorResponse) => {
       // On 401 (expired token), attempt a single refresh
-      if (error.status === 401 && !isAuthEndpoint) {
+      if ((error.status === 401 || error.status === 403) && !isAuthEndpoint) {
         return authService.refreshToken().pipe(
           switchMap((res) => {
             const retried = req.clone({

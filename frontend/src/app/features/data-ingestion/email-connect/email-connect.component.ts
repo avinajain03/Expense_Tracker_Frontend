@@ -131,37 +131,13 @@ export class EmailConnectComponent implements OnInit {
   }
 
   connectGmail(): void {
-    // In production, this would open a popup/redirect for Google OAuth
-    // For now, simulate the auth code exchange
-    this.loading.set(true);
+    // Google OAuth requires a real client_id configured in the backend.
+    // Show an informational message until OAuth is set up.
     this.messageService.add({
-      severity: 'info',
-      summary: 'Gmail OAuth',
-      detail: 'Initiating Google sign-in flow…',
-      life: 3000,
-    });
-
-    // Simulated — replace with real OAuth popup flow
-    this.ingestionService.connectGmail('simulated-auth-code').subscribe({
-      next: (status) => {
-        this.connectionStatus.set(status);
-        this.loading.set(false);
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Connected',
-          detail: `Gmail account connected successfully`,
-          life: 3000,
-        });
-      },
-      error: () => {
-        this.loading.set(false);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Connection Failed',
-          detail: 'Could not connect to Gmail. Is the backend running?',
-          life: 5000,
-        });
-      },
+      severity: 'warn',
+      summary: 'Coming Soon',
+      detail: 'Google OAuth integration is not yet configured. Use IMAP credentials for now.',
+      life: 5000,
     });
   }
 

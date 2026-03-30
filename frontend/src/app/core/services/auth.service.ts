@@ -1,7 +1,7 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
   User,
@@ -53,25 +53,43 @@ export class AuthService {
     }
   }
 
+  // ─── Response Mapper ─────────────────────────────────────────────────────────
+  private mapToAuthResponse(raw: any): AuthResponse {
+    const d = raw?.data ?? raw;
+    return {
+      accessToken: d.accessToken,
+      refreshToken: d.refreshToken,
+      user: {
+        id: d.userId ?? d.id,
+        email: d.mail ?? d.email,
+        fullName: d.fullName,
+        age: d.age ?? 0,
+        monthlyIncome: d.monthlyIncome ?? 0,
+        currency: d.currency ?? 'INR',
+        avatarUrl: d.avatarUrl,
+      },
+    };
+  }
+
   // ─── Auth Methods ────────────────────────────────────────────────────────────
   register(data: RegisterRequest): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/register`, data)
-      .pipe(tap((res) => this.saveSession(res)));
+      .post<any>(`${this.apiUrl}/register`, data)
+      .pipe(map((res) => this.mapToAuthResponse(res)), tap((res) => this.saveSession(res)));
   }
 
   login(data: LoginRequest): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/login`, data)
-      .pipe(tap((res) => this.saveSession(res)));
+      .post<any>(`${this.apiUrl}/login`, data)
+      .pipe(map((res) => this.mapToAuthResponse(res)), tap((res) => this.saveSession(res)));
   }
 
   refreshToken(): Observable<AuthResponse> {
     const refreshToken = this.getRefreshToken();
     const body: TokenRefreshRequest = { refreshToken: refreshToken ?? '' };
     return this.http
-      .post<AuthResponse>(`${this.apiUrl}/refresh`, body)
-      .pipe(tap((res) => this.saveSession(res)));
+      .post<any>(`${this.apiUrl}/refresh`, body)
+      .pipe(map((res) => this.mapToAuthResponse(res)), tap((res) => this.saveSession(res)));
   }
 
   logout(): void {

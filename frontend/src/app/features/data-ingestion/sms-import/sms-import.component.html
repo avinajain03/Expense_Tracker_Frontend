@@ -101,7 +101,7 @@
           <th>Merchant</th>
           <th>Amount</th>
           <th>Date</th>
-          <th>UPI Platform</th>
+          <th>Platform</th>
           <th>Confidence</th>
         </tr>
       </ng-template>
@@ -135,7 +135,7 @@
           <td>
             <span
               class="confidence-pill"
-              [class]="confidenceClass(tx.parsingConfidence)"
+              [ngClass]="confidenceClass(tx.parsingConfidence)"
               [pTooltip]="'Raw score: ' + tx.parsingConfidence">
               {{ confidenceLabel(tx.parsingConfidence) }}
               ({{ confidencePercent(tx.parsingConfidence) }})

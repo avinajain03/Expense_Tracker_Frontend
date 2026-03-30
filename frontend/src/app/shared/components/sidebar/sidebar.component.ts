@@ -23,7 +23,7 @@ export class SidebarComponent {
 
   readonly navItems: NavItem[] = [
     { label: 'Dashboard',   icon: 'pi-home',           route: '/dashboard' },
-    { label: 'Import Data', icon: 'pi-upload',          route: '/import' },
+    { label: 'Import Data', icon: 'pi-upload',          route: '/ingest' },
     { label: 'Transactions',icon: 'pi-list',            route: '/transactions' },
     { label: 'Goals',       icon: 'pi-flag',            route: '/goals' },
     { label: 'Investments', icon: 'pi-chart-line',      route: '/investments' },

@@ -79,7 +79,7 @@ export class SmsImportComponent {
 
   parse(): void {
     const lines = this.rawSmsInput
-      .split('\n')
+      .split(/\n\s*\n/)          // split on blank lines → each block = one SMS
       .map((l) => l.trim())
       .filter((l) => l.length > 0);
 
