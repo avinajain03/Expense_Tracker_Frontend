@@ -45,6 +45,13 @@ export const routes: Routes = [
             (m) => m.IngestionLogComponent
           ),
       },
+      {
+        path: 'statement',
+        loadComponent: () =>
+          import('./features/data-ingestion/statement-upload/statement-upload.component').then(
+            (m) => m.StatementUploadComponent
+          ),
+      },
       { path: '', redirectTo: 'sms', pathMatch: 'full' },
     ],
   },

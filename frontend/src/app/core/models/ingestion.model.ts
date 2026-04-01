@@ -84,3 +84,30 @@ export interface EmailScanResult {
   duplicateCount: number;
   emails: DetectedEmail[];
 }
+
+// ── Bank Statement Upload Models ────────────────────────────────────────────
+
+export type SupportedBank = 'HDFC' | 'SBI' | 'ICICI' | 'AXIS' | 'KOTAK' | 'OTHER';
+
+export interface StatementParsedTransaction {
+  id?: string;
+  date: string;
+  description: string;
+  merchant: string;
+  amount: number;
+  type: 'DEBIT' | 'CREDIT';
+  balance?: number;
+  category?: string;
+  parsingConfidence: number;
+  selected?: boolean;
+}
+
+export interface StatementUploadResponse {
+  totalRows: number;
+  parsedCount: number;
+  duplicateCount: number;
+  failedCount: number;
+  transactions: StatementParsedTransaction[];
+  fileName: string;
+  bankName: SupportedBank;
+}

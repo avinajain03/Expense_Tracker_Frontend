@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpRequest, HttpEvent } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import {
@@ -9,6 +9,8 @@ import {
   ImapConfig,
   EmailConnectionStatus,
   EmailScanResult,
+  SupportedBank,
+  StatementUploadResponse,
 } from '../models/ingestion.model';
 
 @Injectable({ providedIn: 'root' })
@@ -89,6 +91,45 @@ export class IngestionService {
   disconnectEmail(): Observable<void> {
     return this.http
       .delete<any>(`${this.baseUrl}/email/connect`)
+      .pipe(map((res) => res?.data ?? res));
+  }
+
+  // ── Bank Statement ────────────────────────────────────────────────────────
+
+  /**
+   * Upload a bank statement file (PDF/CSV/XLSX) for parsing.
+   * Uses a raw HttpRequest so callers can subscribe to upload-progress events.
+   * Maps to POST /api/v1/ingest/statement/upload
+   */
+  uploadStatement(
+    file: File,
+    bankName: SupportedBank,
+    password?: string,
+  ): Observable<HttpEvent<any>> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    formData.append('bankName', bankName);
+    if (password) {
+      formData.append('password', password);
+    }
+
+    const req = new HttpRequest(
+      'POST',
+      `${this.baseUrl}/statement/upload`,
+      formData,
+      { reportProgress: true },
+    );
+
+    return this.http.request(req);
+  }
+
+  /**
+   * Poll parsing progress for large statement files.
+   * Maps to GET /api/v1/ingest/statement/{id}/status
+   */
+  getStatementStatus(id: string): Observable<any> {
+    return this.http
+      .get<any>(`${this.baseUrl}/statement/${id}/status`)
       .pipe(map((res) => res?.data ?? res));
   }
 }

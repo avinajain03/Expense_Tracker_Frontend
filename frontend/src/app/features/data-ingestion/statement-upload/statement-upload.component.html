@@ -1,0 +1,307 @@
+<p-toast position="top-right"></p-toast>
+
+<section class="statement-upload">
+
+  <!-- ── Header ── -->
+  <div class="section-header">
+    <div class="title-row">
+      <i class="pi pi-file-pdf"></i>
+      <h2>Bank Statement Upload</h2>
+    </div>
+    <p class="subtitle">Upload a PDF, CSV, or Excel bank statement and we'll extract every transaction automatically.</p>
+  </div>
+
+  <!-- ── Bank Selector + Upload Zone ── -->
+  <div class="upload-card glass-card">
+
+    <!-- Bank Selection -->
+    <div class="bank-selector">
+      <label class="input-label">Select your bank</label>
+      <p-select
+        [options]="bankOptions"
+        [(ngModel)]="selectedBank"
+        optionLabel="label"
+        placeholder="Choose a bank…"
+        [showClear]="true"
+        styleClass="bank-dropdown"
+        id="bankSelector">
+      </p-select>
+    </div>
+
+    <!-- Drag & Drop Zone -->
+    <div
+      class="drop-zone"
+      [class.dragging]="dragging()"
+      [class.has-file]="!!selectedFile()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave($event)"
+      (drop)="onDrop($event)"
+      id="dropZone">
+
+      <!-- No file selected -->
+      <ng-container *ngIf="!selectedFile()">
+        <div class="drop-icon-wrapper">
+          <i class="pi pi-cloud-upload drop-icon"></i>
+        </div>
+        <p class="drop-label">Drag & drop your statement here</p>
+        <span class="drop-hint">or</span>
+        <label class="browse-btn" for="fileInput">
+          <i class="pi pi-folder-open"></i>
+          Browse Files
+        </label>
+        <input
+          type="file"
+          id="fileInput"
+          [accept]="acceptedTypes"
+          (change)="onFileSelected($event)"
+          hidden />
+        <p class="drop-formats">Supported: <strong>PDF</strong>, <strong>CSV</strong>, <strong>XLSX</strong> (max {{ maxFileSizeMB }} MB)</p>
+      </ng-container>
+
+      <!-- File selected -->
+      <ng-container *ngIf="selectedFile()">
+        <div class="file-preview">
+          <div class="file-icon-wrap">
+            <i [class]="fileTypeIcon + ' file-icon'"></i>
+          </div>
+          <div class="file-info">
+            <span class="file-name">{{ selectedFile()!.name }}</span>
+            <span class="file-size">{{ fileInfo }}</span>
+          </div>
+          <button
+            pButton
+            icon="pi pi-times"
+            severity="danger"
+            [outlined]="true"
+            [rounded]="true"
+            (click)="removeFile()"
+            pTooltip="Remove file"
+            class="remove-btn">
+          </button>
+        </div>
+      </ng-container>
+    </div>
+
+    <!-- Upload Progress -->
+    <div class="progress-section" *ngIf="uploading()">
+      <p-progressBar
+        [value]="uploadPercent()"
+        [showValue]="true"
+        styleClass="upload-progress">
+      </p-progressBar>
+      <span class="progress-label">Uploading and parsing statement…</span>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="upload-actions">
+      <button
+        pButton
+        label="Upload & Parse"
+        icon="pi pi-upload"
+        [loading]="uploading()"
+        [disabled]="!canUpload"
+        (click)="upload()"
+        class="btn-upload">
+      </button>
+      <button
+        pButton
+        label="Clear"
+        icon="pi pi-times"
+        severity="secondary"
+        [outlined]="true"
+        (click)="clearAll()"
+        [disabled]="!selectedFile() && parsedTransactions().length === 0"
+        class="btn-clear">
+      </button>
+    </div>
+
+  </div>
+
+  <!-- ── Password Dialog Overlay ── -->
+  <div class="password-overlay" *ngIf="showPasswordDialog()" (click)="dismissPasswordDialog()">
+    <div class="password-dialog glass-card" (click)="$event.stopPropagation()">
+
+      <!-- Lock Icon -->
+      <div class="pw-icon-wrap">
+        <i class="pi pi-lock pw-icon"></i>
+      </div>
+
+      <h3 class="pw-title">Password Protected PDF</h3>
+      <p class="pw-subtitle">
+        This bank statement is encrypted. Please enter the password to unlock and parse it.
+      </p>
+
+      <!-- Password Input -->
+      <div class="pw-input-group">
+        <label class="pw-label" for="pdfPasswordInput">PDF Password</label>
+        <div class="pw-field-row">
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            id="pdfPasswordInput"
+            class="pw-input"
+            [class.pw-input-error]="passwordError()"
+            [(ngModel)]="pdfPassword"
+            placeholder="Enter statement password…"
+            (keydown.enter)="submitWithPassword()"
+            autocomplete="off" />
+          <button
+            type="button"
+            class="pw-toggle-btn"
+            (click)="togglePasswordVisibility()"
+            [pTooltip]="showPassword() ? 'Hide password' : 'Show password'">
+            <i [class]="showPassword() ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+          </button>
+        </div>
+        <span class="pw-error" *ngIf="passwordError()">
+          <i class="pi pi-exclamation-circle"></i>
+          {{ passwordError() }}
+        </span>
+      </div>
+
+      <!-- Actions -->
+      <div class="pw-actions">
+        <button
+          pButton
+          label="Unlock &amp; Parse"
+          icon="pi pi-unlock"
+          [loading]="submittingPassword()"
+          [disabled]="submittingPassword()"
+          (click)="submitWithPassword()"
+          class="pw-submit-btn">
+        </button>
+        <button
+          pButton
+          label="Cancel"
+          icon="pi pi-times"
+          severity="secondary"
+          [outlined]="true"
+          (click)="dismissPasswordDialog()"
+          [disabled]="submittingPassword()"
+          class="pw-cancel-btn">
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Parse Summary ── -->
+  <div class="parse-stats glass-card" *ngIf="uploadResult()">
+    <div class="stat-chip total">
+      <i class="pi pi-list"></i>
+      <span>{{ uploadResult()!.totalRows }} Total Rows</span>
+    </div>
+    <div class="stat-chip success">
+      <i class="pi pi-check-circle"></i>
+      <span>{{ uploadResult()!.parsedCount }} Parsed</span>
+    </div>
+    <div class="stat-chip warning" *ngIf="uploadResult()!.duplicateCount > 0">
+      <i class="pi pi-copy"></i>
+      <span>{{ uploadResult()!.duplicateCount }} Duplicates</span>
+    </div>
+    <div class="stat-chip danger" *ngIf="uploadResult()!.failedCount > 0">
+      <i class="pi pi-exclamation-triangle"></i>
+      <span>{{ uploadResult()!.failedCount }} Failed</span>
+    </div>
+    <div class="spacer"></div>
+    <button pButton label="Import Selected ({{ selectedTransactions.length }})"
+      icon="pi pi-check"
+      [disabled]="selectedTransactions.length === 0"
+      (click)="importSelected()"
+      class="btn-import-sel">
+    </button>
+    <button pButton label="Import All"
+      icon="pi pi-download"
+      (click)="importAll()"
+      class="btn-import-all gradient-btn">
+    </button>
+  </div>
+
+  <!-- ── Preview Table ── -->
+  <div class="preview-table-wrap glass-card" *ngIf="parsedTransactions().length > 0">
+    <div class="table-header-row">
+      <h3>Parsed Transactions</h3>
+      <label class="select-all">
+        <p-checkbox
+          [binary]="true"
+          [ngModel]="selectedTransactions.length === parsedTransactions().length"
+          (onChange)="toggleAll($event.checked)"
+          inputId="selectAllStmt">
+        </p-checkbox>
+        <span>Select All</span>
+      </label>
+    </div>
+
+    <p-table
+      [value]="parsedTransactions()"
+      [scrollable]="true"
+      scrollHeight="420px"
+      styleClass="p-datatable-sm">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th style="width:48px"></th>
+          <th>Date</th>
+          <th>Description</th>
+          <th>Amount</th>
+          <th>Type</th>
+          <th>Category</th>
+          <th>Confidence</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-tx>
+        <tr [class.row-selected]="tx.selected">
+          <td>
+            <p-checkbox
+              [(ngModel)]="tx.selected"
+              [binary]="true">
+            </p-checkbox>
+          </td>
+          <td class="date-cell">{{ tx.date | date:'dd MMM yyyy' }}</td>
+          <td>
+            <div class="desc-cell">
+              <span class="desc-text" [pTooltip]="tx.description">
+                {{ tx.description || tx.merchant || '—' }}
+              </span>
+            </div>
+          </td>
+          <td>
+            <span class="amount-cell" [ngClass]="tx.type === 'CREDIT' ? 'credit' : 'debit'">
+              {{ tx.type === 'CREDIT' ? '+' : '-' }}₹{{ tx.amount | number:'1.2-2' }}
+            </span>
+          </td>
+          <td>
+            <span class="type-badge" [ngClass]="tx.type === 'CREDIT' ? 'type-credit' : 'type-debit'">
+              {{ tx.type }}
+            </span>
+          </td>
+          <td>
+            <span class="category-cell">{{ tx.category || '—' }}</span>
+          </td>
+          <td>
+            <span
+              class="confidence-pill"
+              [ngClass]="confidenceClass(tx.parsingConfidence)"
+              [pTooltip]="'Raw score: ' + tx.parsingConfidence">
+              {{ confidenceLabel(tx.parsingConfidence) }}
+              ({{ confidencePercent(tx.parsingConfidence) }})
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="7" class="empty-row">No transactions parsed yet.</td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+
+  <!-- ── Empty State ── -->
+  <div class="empty-state glass-card" *ngIf="!selectedFile() && parsedTransactions().length === 0 && !uploading()">
+    <i class="pi pi-file-pdf empty-icon"></i>
+    <p>Select a bank, upload your statement and click <strong>Upload & Parse</strong> to get started.</p>
+  </div>
+
+</section>

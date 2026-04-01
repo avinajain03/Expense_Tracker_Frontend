@@ -1,0 +1,587 @@
+.statement-upload {
+  animation: fadeIn 0.3s ease;
+  padding: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.section-header {
+  margin-bottom: 1.5rem;
+
+  .title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 0.4rem;
+
+    i {
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, #00E676, #1DE9B6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin: 0;
+    }
+  }
+
+  .subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+// ── Upload Card ───────────────────────────────────────────────────────────────
+.upload-card {
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+// ── Bank Selector ─────────────────────────────────────────────────────────────
+.bank-selector {
+  margin-bottom: 1.5rem;
+
+  .input-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+
+  ::ng-deep .bank-dropdown {
+    width: 100%;
+    max-width: 360px;
+
+    .p-select {
+      background: rgba(255, 255, 255, 0.04) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      border-radius: 10px !important;
+      color: var(--text-primary) !important;
+
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.2) !important;
+      }
+
+      &.p-focus {
+        border-color: var(--accent-primary) !important;
+        box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.12) !important;
+      }
+    }
+  }
+}
+
+// ── Drop Zone ─────────────────────────────────────────────────────────────────
+.drop-zone {
+  border: 2px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  padding: 2.5rem 2rem;
+  text-align: center;
+  transition: all 0.25s ease;
+  background: rgba(255, 255, 255, 0.02);
+  cursor: pointer;
+
+  &.dragging {
+    border-color: var(--accent-primary);
+    background: rgba(0, 210, 255, 0.05);
+    box-shadow: 0 0 0 4px rgba(0, 210, 255, 0.08);
+  }
+
+  &.has-file {
+    border-style: solid;
+    border-color: rgba(0, 230, 118, 0.3);
+    background: rgba(0, 230, 118, 0.04);
+    cursor: default;
+  }
+
+  .drop-icon-wrapper {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1.25rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(0, 230, 118, 0.15), rgba(29, 233, 182, 0.15));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2.5s ease-in-out infinite;
+  }
+
+  .drop-icon {
+    font-size: 2rem;
+    color: #00E676;
+  }
+
+  .drop-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0 0 0.5rem;
+  }
+
+  .drop-hint {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+  }
+
+  .browse-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 1.25rem;
+    background: linear-gradient(135deg, #00E676, #1DE9B6);
+    color: #0F0F1A;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    margin-bottom: 1rem;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(0, 230, 118, 0.3);
+    }
+  }
+
+  .drop-formats {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin: 0;
+
+    strong { color: var(--text-primary); }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+// ── File Preview (inside drop zone) ──────────────────────────────────────────
+.file-preview {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-align: left;
+
+  .file-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, rgba(0, 230, 118, 0.15), rgba(29, 233, 182, 0.15));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .file-icon {
+    font-size: 1.4rem;
+    color: #00E676;
+  }
+
+  .file-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    .file-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      word-break: break-all;
+    }
+
+    .file-size {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+  }
+
+  .remove-btn {
+    flex-shrink: 0;
+  }
+}
+
+// ── Upload Progress ──────────────────────────────────────────────────────────
+.progress-section {
+  margin-top: 1.25rem;
+
+  .progress-label {
+    display: block;
+    text-align: center;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
+  }
+
+  ::ng-deep .upload-progress .p-progressbar {
+    height: 10px;
+    border-radius: 100px;
+    background: rgba(255, 255, 255, 0.06);
+
+    .p-progressbar-value {
+      background: linear-gradient(90deg, #00E676, #1DE9B6) !important;
+      border-radius: 100px;
+    }
+  }
+}
+
+// ── Action Buttons ───────────────────────────────────────────────────────────
+.upload-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+
+  .btn-upload {
+    background: linear-gradient(135deg, #00E676, #1DE9B6) !important;
+    border: none !important;
+    color: #0F0F1A !important;
+    font-weight: 600;
+  }
+}
+
+// ── Password Dialog Overlay ──────────────────────────────────────────────────
+.password-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: overlayIn 0.25s ease;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.password-dialog {
+  width: 92%;
+  max-width: 440px;
+  padding: 2rem 2rem 1.75rem;
+  text-align: center;
+  animation: dialogSlideUp 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+@keyframes dialogSlideUp {
+  from { opacity: 0; transform: translateY(24px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.pw-icon-wrap {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.25rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 171, 0, 0.18), rgba(255, 109, 0, 0.18));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: lockPulse 2s ease-in-out infinite;
+}
+
+@keyframes lockPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 171, 0, 0.25); }
+  50%      { box-shadow: 0 0 0 12px rgba(255, 171, 0, 0); }
+}
+
+.pw-icon {
+  font-size: 1.6rem;
+  color: #FFAB00;
+}
+
+.pw-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.pw-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.pw-input-group {
+  text-align: left;
+  margin-bottom: 1.5rem;
+}
+
+.pw-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+
+.pw-field-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+.pw-input {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.7rem 2.8rem 0.7rem 1rem;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  &:focus {
+    border-color: #FFAB00;
+    box-shadow: 0 0 0 3px rgba(255, 171, 0, 0.12);
+  }
+
+  &.pw-input-error {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px rgba(255, 82, 82, 0.12);
+  }
+}
+
+.pw-toggle-btn {
+  position: absolute;
+  right: 0.6rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.4rem;
+  font-size: 1rem;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    color: var(--text-primary);
+  }
+}
+
+.pw-error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--danger);
+  animation: shakeError 0.35s ease;
+
+  i { font-size: 0.85rem; }
+}
+
+@keyframes shakeError {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-4px); }
+  40%      { transform: translateX(4px); }
+  60%      { transform: translateX(-3px); }
+  80%      { transform: translateX(2px); }
+}
+
+.pw-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+
+  .pw-submit-btn {
+    background: linear-gradient(135deg, #FFAB00, #FF6D00) !important;
+    border: none !important;
+    color: #0F0F1A !important;
+    font-weight: 700;
+    min-width: 150px;
+  }
+
+  .pw-cancel-btn {
+    font-weight: 600;
+  }
+}
+
+// ── Parse Stats (same pattern as SMS) ────────────────────────────────────────
+.parse-stats {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+
+  .spacer { flex: 1; }
+
+  .stat-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.85rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    font-weight: 600;
+
+    &.total   { background: rgba(0, 210, 255, 0.12);  color: var(--accent-primary); }
+    &.success { background: rgba(0, 230, 118, 0.15);  color: var(--success); }
+    &.warning { background: rgba(255, 214, 0, 0.15);  color: var(--warning); }
+    &.danger  { background: rgba(255, 82, 82, 0.15);  color: var(--danger); }
+  }
+
+  .btn-import-sel {
+    background: transparent !important;
+    border: 1px solid var(--accent-primary) !important;
+    color: var(--accent-primary) !important;
+    font-weight: 600;
+  }
+
+  .gradient-btn {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
+    border: none !important;
+    font-weight: 600;
+  }
+}
+
+// ── Preview Table (same pattern as SMS) ──────────────────────────────────────
+.preview-table-wrap {
+  padding: 1.5rem;
+  margin-bottom: 1.25rem;
+
+  .table-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .select-all {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+  }
+
+  .desc-cell {
+    max-width: 260px;
+
+    .desc-text {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-weight: 500;
+    }
+  }
+
+  .amount-cell {
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+
+    &.debit  { color: var(--danger); }
+    &.credit { color: var(--success); }
+  }
+
+  .date-cell {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+
+  .type-badge {
+    padding: 0.2rem 0.65rem;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+
+    &.type-debit {
+      background: rgba(255, 82, 82, 0.15);
+      color: var(--danger);
+    }
+
+    &.type-credit {
+      background: rgba(0, 230, 118, 0.15);
+      color: var(--success);
+    }
+  }
+
+  .category-cell {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+  }
+
+  .confidence-pill {
+    padding: 0.25rem 0.7rem;
+    border-radius: 100px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    cursor: default;
+
+    &.conf-high   { background: rgba(0, 230, 118, 0.15); color: var(--success); }
+    &.conf-medium { background: rgba(255, 214, 0, 0.15);  color: var(--warning); }
+    &.conf-low    { background: rgba(255, 82, 82, 0.15);  color: var(--danger); }
+  }
+
+  .row-selected { background: rgba(0, 210, 255, 0.05) !important; }
+
+  .empty-row {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 2rem;
+  }
+}
+
+// ── Empty State ───────────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  padding: 3rem 2rem;
+
+  .empty-icon {
+    font-size: 3rem;
+    color: var(--text-secondary);
+    opacity: 0.4;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0;
+
+    strong { color: #00E676; }
+  }
+}

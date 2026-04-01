@@ -42,7 +42,7 @@ export class DataIngestionComponent {
       icon: 'pi pi-file-pdf',
       route: 'statement',
       gradient: 'linear-gradient(135deg, #00E676, #1DE9B6)',
-      available: false,
+      available: true,
     },
   ];
 }
